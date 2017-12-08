@@ -1,0 +1,34 @@
+[
+  {
+    "ParameterKey": "AvailabilityZones",
+    "ParameterValue": "$[alfred_getaz_2]"
+  },
+  {
+    "ParameterKey": "KeyPairName",
+    "ParameterValue": "id_rsa"
+  },
+  {
+    "ParameterKey": "EMSServerAMIType",
+    "ParameterValue": "Amazon-Linux-HVM"
+  },
+  {
+    "ParameterKey": "EMSInstallerName",
+    "ParameterValue": "TIB_ems-dev_8.4.0_linux_x86_64.zip"
+  },
+  {
+    "ParameterKey": "EMSServerPort",
+    "ParameterValue": "8222"
+  },
+  {
+    "ParameterKey": "EMSServerPort",
+    "ParameterValue": "8222"
+  },
+  {
+    "ParameterKey": "EMSS3BucketName",
+    "ParameterValue": "sk-emstest"
+  },
+  {
+    "ParameterKey": "QSS3BucketName",
+    "ParameterValue": "sk-emstest"
+  }
+]
