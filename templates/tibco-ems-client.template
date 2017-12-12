@@ -1,0 +1,492 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  This template deploys TIBCO EMS "Client" 2 EC2 instances in two private
+  subnets.  **WARNING** This template creates EC2 instances and related
+  resources. You will  be billed for the AWS resources used if you create a
+  stack from this template.
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+      - Label: TIBCO EMS Client Configuration
+        Parameters:
+          - EMSS3BucketName
+          - EMSInstallerName
+          - EMSAMIType
+          - EMSClientCount
+          - EMSClientInstanceType
+          - KeyPairName
+          - BastionSecurityGroupID
+          - EMSEFSID
+          - EMSServer1CP
+          - EMSServer2CP
+    ParameterLabels:
+      BastionSecurityGroupID:
+        default: Bastion Security Group ID
+      EMSS3BucketName:
+        default: EMS S3 Bucket Name
+      EMSServerClientAccessSecurityGroupID:
+        default: EMS Server Client Access Security Group ID
+      EMSAMIType:
+        default: EMS Client AMI Type
+      EMSClientCount:
+        default: Number of EMS client instances
+      EMSClientInstanceType:
+        default: EMS Server Instance Type
+      EMSEFSID:
+        default: EMS EFS ID (For Backup Purposes)
+      EMSInstallerName:
+        default: EMS Installer Package Name
+      EMSServer1CP:
+        default: EMS Server 1 Connection Point
+      EMSServer2CP:
+        default: EMS Server 2 Connection Point
+      KeyPairName:
+        default: SSH Key Name
+      QSS3BucketName:
+        default: Quick Start S3 Bucket Name
+      QSS3KeyPrefix:
+        default: Quick Start S3 Key Prefix
+      Subnet1ID:
+        default: Subnet 1 ID
+      Subnet2ID:
+        default: Subnet 2 ID
+      VPCID:
+        default: VPC ID
+Parameters:
+  BastionSecurityGroupID:
+    Description: >
+      ID of the bastion host security group to enable SSH connections (e.g.,
+      sg-7f16e910)
+    Type: 'AWS::EC2::SecurityGroup::Id'
+    Default: sg-e36f9896
+  EMSAMIType:
+    AllowedValues:
+      - Amazon-Linux-HVM
+      - RHEL-7.4_HVM_GA
+    Default: Amazon-Linux-HVM
+    Description: Linux Operating system to use - Amazon Linux or Red Hat
+    Type: String
+  EMSClientInstanceType:
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m3.medium
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c3.large
+      - c3.xlarge
+      - c3.2xlarge
+      - c3.4xlarge
+      - c3.8xlarge
+    ConstraintDescription: Must contain valid instance type
+    Default: t2.medium
+    Description: Type of EC2 instance for the EMS Client instances
+    Type: String
+  EMSInstallerName:
+    Type: String
+    Description: >-
+      Name of the TIBCO EMS Installation archive downloaded from TIBCO eDelivery
+      site
+    Default: TIB_ems-dev_8.4.0_linux_x86_64.zip
+  EMSClientCount:
+    Type: Number
+    Description: >-
+      Number of EMS client instances to create
+    Default: 2
+  EMSS3BucketName:
+    AllowedPattern: '^[a-z0-9][a-z0-9-.]*$'
+    Default: sk-emstest
+    Description: >-
+      Name of the S3 bucket for retrieving/storing EMS artifacts such as the
+      installer archive.
+    Type: String
+  EMSServerClientAccessSecurityGroupID:
+    Type: 'AWS::EC2::SecurityGroup::Id'
+    Description: >-
+      ID of the security group for clients accessing the EMS Servers (e.g.,
+      sg-7f16e910)
+    Default: sg-2640fb53
+  EMSEFSID:
+    Type: String
+    Description: >-
+      EMS EFS ID (For Backup Purposes)
+    Default: fs-3f7a5376
+  EMSServer1CP:
+    Type: String
+    Description: >-
+      EMS Server 1 Connection Point
+    Default: 10.0.23.15:7222
+  EMSServer2CP:
+    Type: String
+    Description: >-
+      EMS Server 2 Connection Point
+    Default: 10.0.44.221:7222
+  KeyPairName:
+    Description: >
+      Name of an existing EC2 key pair. All instances will launch with this key
+      pair.
+    Type: 'AWS::EC2::KeyPair::KeyName'
+    Default: id_rsa
+  QSS3BucketName:
+    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
+    ConstraintDescription: >-
+      Quick Start bucket name can include numbers, lowercase letters, uppercase
+      letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: quickstart-reference
+    Description: >-
+      S3 bucket name for the Quick Start assets. This string can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot
+      start or end with a hyphen (-).
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: '^[0-9a-zA-Z-/]*$'
+    ConstraintDescription: >-
+      Quick Start key prefix can include numbers, lowercase letters, uppercase
+      letters, hyphens (-), and forward slash (/).
+    Default: examples/latest/
+    Description: >-
+      S3 key prefix for the Quick Start assets. Quick Start key prefix can
+      include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/).
+    Type: String
+  PublicSubnet1ID:
+    Description: 'ID of Subnet 1 in Availability Zone 1 (e.g., subnet-a0246dcd)'
+    Type: 'AWS::EC2::Subnet::Id'
+    Default: subnet-67f73448
+  PublicSubnet2ID:
+    Description: 'ID of Subnet 2 in Availability Zone 2 (e.g., subnet-b1f432cd)'
+    Type: 'AWS::EC2::Subnet::Id'
+    Default: subnet-6bf57920
+  PrivateSubnet1ID:
+    Description: 'ID of Subnet 1 in Availability Zone 1 (e.g., subnet-a0246dcd)'
+    Type: 'AWS::EC2::Subnet::Id'
+    Default: subnet-1cec2f33
+  PrivateSubnet2ID:
+    Description: 'ID of Subnet 2 in Availability Zone 2 (e.g., subnet-b1f432cd)'
+    Type: 'AWS::EC2::Subnet::Id'
+    Default: subnet-3bf77b70
+  VPCID:
+    Description: ID of your existing VPC for deployment
+    Type: 'AWS::EC2::VPC::Id'
+    Default: vpc-30cc4f48
+Mappings:
+  AWSAMIRegionMap:
+    AMI:
+      AMZLNX: amzn-ami-hvm-2017.09.1.20171103-x86_64-gp2
+      RHELHVM: RHEL-7.4_HVM_GA-20170808-x86_64-2-Hourly2-GP2
+    ap-northeast-1:
+      AMZLNX: ami-2a69be4c
+      RHELHVM: ami-30ef0556
+    ap-northeast-2:
+      AMZLNX: ami-9bec36f5
+      RHELHVM: ami-0f5a8361
+    ap-south-1:
+      AMZLNX: ami-4fc58420
+      RHELHVM: ami-e41b618b
+    ap-southeast-1:
+      AMZLNX: ami-0797ea64
+      RHELHVM: ami-10bb2373
+    ap-southeast-2:
+      AMZLNX: ami-8536d6e7
+      RHELHVM: ami-ccecf5af
+    ca-central-1:
+      AMZLNX: ami-fd55ec99
+      RHELHVM: ami-dad866be
+    eu-central-1:
+      AMZLNX: ami-c7ee5ca8
+      RHELHVM: ami-d74be5b8
+    eu-west-1:
+      AMZLNX: ami-acd005d5
+      RHELHVM: ami-bb9a6bc2
+    eu-west-2:
+      AMZLNX: ami-1a7f6d7e
+      RHELHVM: ami-a1f5e4c5
+    sa-east-1:
+      AMZLNX: ami-f1344b9d
+      RHELHVM: ami-a789ffcb
+    us-east-1:
+      AMZLNX: ami-8c1be5f6
+      RHELHVM: ami-c998b6b2
+    us-east-2:
+      AMZLNX: ami-c5062ba0
+      RHELHVM: ami-cfdafaaa
+    us-west-1:
+      AMZLNX: ami-02eada62
+      RHELHVM: ami-66eec506
+    us-west-2:
+      AMZLNX: ami-e689729e
+      RHELHVM: ami-9fa343e7
+Conditions:
+  UseAmazonLinux: !Equals
+    - !Ref EMSAMIType
+    - Amazon-Linux-HVM
+Resources:
+  TibcoEmsMainLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+  IamInstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - 's3:GetObject'
+                Resource: !Sub 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                Effect: Allow
+          PolicyName: aws-quick-start-s3-policy
+        - PolicyName: Instance-Logging-Role
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'logs:DescribeLogStreams'
+                Resource: !GetAtt TibcoEmsMainLogGroup.Arn
+        - PolicyName: Instance-S3-Access-Role
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: 's3:ListAllMyBuckets'
+                Resource: 'arn:aws:s3:::*'
+              - Effect: Allow
+                Action:
+                  - 's3:ListBucket'
+                  - 's3:GetBucketLocation'
+                Resource: !Sub 'arn:aws:s3:::${EMSS3BucketName}'
+              - Effect: Allow
+                Action:
+                  - 's3:GetObject'
+                  - 's3:PutObject'
+                  - 's3:DeleteObject'
+                Resource: !Sub 'arn:aws:s3:::${EMSS3BucketName}/*'
+  IamInstanceRoleProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref IamInstanceRole
+  EMSClientFleetSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: Control access to the client fleet
+      VpcId: !Ref VPCID
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref BastionSecurityGroupID
+  EMSClientLaunchConfiguration:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Metadata:
+      'AWS::CloudFormation::Authentication':
+        S3AccessCreds:
+          type: S3
+          roleName: !Ref IamInstanceRole
+          buckets:
+            - !Ref EMSS3BucketName
+      'AWS::CloudFormation::Init':
+        config:
+          packages:
+            yum:
+              java-1.8.0-openjdk-devel: []
+              epel-release: []
+              nfs-utils: []
+          sources:
+            /tmp/ems/installer: !Sub 'https://${EMSS3BucketName}.s3.amazonaws.com/${EMSInstallerName}'
+          files:
+            /tmp/ems/scripts/ems-prep-env.sh:
+              content: !Sub |
+                #!/bin/bash -e
+                # Add TIBCO_HOME ENV for all users'
+                cat >> /etc/profile <<EOF
+                export TIBCO_HOME=/opt/tibco
+                export EMSEFSID=${EMSEFSID}
+                export EMSServer1CP=${EMSServer1CP}
+                export EMSServer2CP=${EMSServer2CP}
+                EOF
+                source /etc/profile
+
+                # Uninstall java-1.7.0
+                yum remove -y java-1.7.0-openjdk
+                ########
+              mode: '000755'
+              owner: root
+              group: root
+            /tmp/ems/scripts/ems-run-installer.sh:
+              content: !Sub |
+                #!/bin/bash -e
+                source /etc/profile
+
+                /tmp/ems/installer/TIBCOUniversalInstaller-lnx-x86-64.bin -V \
+                  responseFile=TIBCOUniversalInstaller-ems.silent \
+                  -is:javahome $JAVA_HOME -is:log /var/log/TIBCOEMSInstaller.log -silent
+                ########
+              mode: '000755'
+              owner: root
+              group: root
+            /etc/awslogs/awslogs.conf:
+              content: !Sub |
+                [general]
+                state_file= /var/log/agent-state
+                # Capture syslogs
+                [/var/log/messages]
+                file = /var/log/messages
+                log_group_name = !Ref TibcoEmsMainLogGroup
+                log_stream_name = {instance_id}/messages
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/awslogs/awscli.conf:
+              content: !Sub |
+                [plugins]
+                cwlogs = cwlogs
+                [default]
+                region = ${AWS::Region}
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/cfn/cfn-hup.conf:
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+              mode: '000400'
+              owner: root
+              group: root
+            /etc/cfn/hooks.d/cfn-auto-reloader.conf:
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.EMSClientLaunchConfiguration.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EMSClientLaunchConfiguration --region ${AWS::Region} -runas=root
+          services:
+            sysvinit:
+              cfn-hup:
+                enabled: 'true'
+                ensureRunning: 'true'
+                files:
+                  - /etc/cfn/cfn-hup.conf
+                  - /etc/cfn/hooks.d/cfn-auto-reloader.conf
+          commands:
+            01-ems-prep-env:
+              command: /tmp/ems/scripts/ems-prep-env.sh
+            02-ems-run-installer:
+              command: /tmp/ems/scripts/ems-run-installer.sh
+    Properties:
+      AssociatePublicIpAddress: false
+      EbsOptimized: false
+      IamInstanceProfile: !Ref IamInstanceRoleProfile
+      ImageId: !If
+        - UseAmazonLinux
+        - !FindInMap
+          - AWSAMIRegionMap
+          - !Ref 'AWS::Region'
+          - AMZLNX
+        - !FindInMap
+          - AWSAMIRegionMap
+          - !Ref 'AWS::Region'
+          - RHELHVM
+      InstanceMonitoring: true
+      InstanceType: !Ref EMSClientInstanceType
+      KeyName: !Ref KeyPairName
+      SecurityGroups:
+        - !Ref EMSServerClientAccessSecurityGroupID
+        - !Ref EMSClientFleetSecurityGroup
+      UserData: !Base64
+        'Fn::Sub': |
+          #!/bin/bash
+
+          # Update existing installed packages
+          yum update -y
+
+          # Helper function
+          function error_exit
+          {
+            /opt/aws/bin/cfn-signal -e 1 --stack ${AWS::StackName} --region ${AWS::Region} --resource EMSClientLaunchConfiguration -r "EMSClientLaunchConfiguration: $1\n"
+            exit 1
+          }
+
+          # If Red-Hat, Install aws-cfn-bootstrap code
+          if [ "${EMSAMIType}" != "Amazon-Linux-HVM" ]; then
+            ### This is redhat 7. It supports cloud-init but Cfn packages need to be installed unlike AWS Linux. And they are installed in a different location
+            # First enable EPEL
+            rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+            # Now install Python Setuptools(easy_install) and Pip
+            yum -y install python-pip
+
+            # Now install cfn scripts
+            /bin/easy_install --script-dir /opt/aws/bin https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz
+
+            # Now fix the cfn-hup script and copy to init.d location as AWS does not do it for you
+            cp -f `pip show aws-cfn-bootstrap 2>/dev/null|grep -E "^Location"|awk -F: '{print $2}'`/init/redhat/cfn-hup /etc/init.d/
+            chmod 755 /etc/init.d/cfn-hup
+            chkconfig --add cfn-hup
+
+          else
+            # Install on Amazon Linux
+            yum install -y aws-cfn-bootstrap
+          fi
+
+          # Initialize the instance
+          /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource EMSClientLaunchConfiguration --region ${AWS::Region}  || error_exit 'Failed to run cfn-init.'
+
+          # Start up the cfn-hup daemon to listen for changes
+          /opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'
+
+          # Download/install AWS Cloudwatch Agent
+          curl https://s3.amazonaws.com//aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
+          chmod +x ./awslogs-agent-setup.py
+          ./awslogs-agent-setup.py -n -r ${AWS::Region} -c /etc/awslogs/awslogs.conf || error_exit 'Failed to run awslogs-setup'
+          chkconfig --add awslogs
+          service awslogs start
+          chkconfig awslogs on
+
+          # All is well so signal success
+          /opt/aws/bin/cfn-signal -e 0 --stack ${AWS::StackName} --region ${AWS::Region} --resource EMSClientAutoScaling -r 'EMSClientLaunchConfiguration: cfn-init Success'
+          ########
+
+  EMSClientAutoScaling:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      DesiredCapacity: !Ref EMSClientCount
+      HealthCheckGracePeriod: 30
+      HealthCheckType: EC2
+      LaunchConfigurationName: !Ref EMSClientLaunchConfiguration
+      MaxSize: !Ref EMSClientCount
+      MinSize: !Ref EMSClientCount
+      VPCZoneIdentifier:
+      - !Ref PrivateSubnet1ID
+      - !Ref PrivateSubnet2ID
+      Tags:
+      - Key: Name
+        Value: !Sub "TIBCO EMS Client (${AWS::StackName})"
+        PropagateAtLaunch: true
+    CreationPolicy:
+      ResourceSignal:
+        Count: !Ref EMSClientCount
+        Timeout: PT15M

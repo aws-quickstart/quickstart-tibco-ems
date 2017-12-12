@@ -1,7 +1,7 @@
 global:
   marketplace-ami: false
-  owner: quickstart-eng@amazon.com
-  qsname: quickstart-tibco-ems-quick-start
+  owner: rflather@tibco.com
+  qsname: quickstart-tibco-ems
   regions:
     - ap-northeast-1
     - ap-northeast-2
@@ -11,17 +11,34 @@ global:
     - ca-central-1
     - eu-central-1
     - eu-west-1
+    - eu-west-2
     - sa-east-1
     - us-east-1
     - us-east-2
     - us-west-1
     - us-west-2
   reporting: true
- 
 tests:
-  quickstart-tibco-ems-quick-startt1:
-    parameter_input: quickstart-tibco-ems-quick-start-example-params1.json
-    template_file: quickstart-tibco-ems-quick-start-example1.template
-  quickstart-tibco-ems-quick-startt2:
-    parameter_input: quickstart-tibco-ems-quick-start-example-params2.json
-    template_file: quickstart-tibco-ems-quick-start-example2.template
+  amazon-linux:
+    template_file: tibco-ems-master.template
+    parameter_input: amazon-linux-params.json
+    regions:
+      - us-east-1
+      - us-east-2
+      - us-west-2
+      - eu-west-1
+      - ap-southeast-2
+      - eu-central-1
+      # Testing EFS Region rule. This should fail as EFS is not supported in us-west
+      - us-west-1
+  redhat-linux:
+    template_file: tibco-ems-master.template
+    parameter_input: redhat-linux-params.json
+    regions:
+      - us-east-1
+      - us-east-2
+      - us-west-2
+      - eu-west-1
+      - ap-southeast-2
+      - eu-central-1
+      - us-west-1       # Testing EFS Region rule. This should fail as EFS is not supported in us-west-1
