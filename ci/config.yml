@@ -31,7 +31,7 @@ tests:
       - ap-southeast-2
       - eu-central-1
       # Testing EFS Region rule. This should fail as EFS is not supported in us-west
-      - us-west-1
+      #- us-west-1
   redhat-linux:
     template_file: tibco-ems-master.template
     parameter_input: redhat-linux-params.json
@@ -42,4 +42,4 @@ tests:
       - eu-west-1
       - ap-southeast-2
       - eu-central-1
-      - us-west-1       # Testing EFS Region rule. This should fail as EFS is not supported in us-west-1
+      #- us-west-1       # Testing EFS Region rule. This should fail as EFS is not supported in us-west-1
