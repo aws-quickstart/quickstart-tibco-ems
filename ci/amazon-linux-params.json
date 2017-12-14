@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "KeyPairName",
-    "ParameterValue": "rflather_temp"
+    "ParameterValue": "cikey"
   },
   {
     "ParameterKey": "EMSServerAMIType",
@@ -26,13 +26,5 @@
   {
     "ParameterKey": "EMSS3BucketName",
     "ParameterValue": "ems-product-bucklet"
-  },
-  {
-    "ParameterKey": "QSS3BucketName",
-    "ParameterValue": "us-tibco-ems"
-  },
-  { 
-    "ParameterKey": "QSS3KeyPrefix",
-    "ParameterValue": ""
   }
 ]
