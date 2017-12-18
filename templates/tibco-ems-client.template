@@ -58,7 +58,6 @@ Parameters:
       ID of the bastion host security group to enable SSH connections (e.g.,
       sg-7f16e910)
     Type: 'AWS::EC2::SecurityGroup::Id'
-    Default: sg-e36f9896
   EMSAMIType:
     AllowedValues:
       - Amazon-Linux-HVM
@@ -107,38 +106,31 @@ Parameters:
     Default: 2
   EMSS3BucketName:
     AllowedPattern: '^[a-z0-9][a-z0-9-.]*$'
-    Default: sk-emstest
     Description: >-
-      Name of the S3 bucket for retrieving/storing EMS artifacts such as the
-      installer archive.
+      Name of the S3 bucket for retrieving EMS installer zip.
     Type: String
   EMSServerClientAccessSecurityGroupID:
     Type: 'AWS::EC2::SecurityGroup::Id'
     Description: >-
       ID of the security group for clients accessing the EMS Servers (e.g.,
       sg-7f16e910)
-    Default: sg-2640fb53
   EMSEFSID:
     Type: String
     Description: >-
       EMS EFS ID (For Backup Purposes)
-    Default: fs-3f7a5376
   EMSServer1CP:
     Type: String
     Description: >-
       EMS Server 1 Connection Point
-    Default: 10.0.23.15:7222
   EMSServer2CP:
     Type: String
     Description: >-
       EMS Server 2 Connection Point
-    Default: 10.0.44.221:7222
   KeyPairName:
     Description: >
       Name of an existing EC2 key pair. All instances will launch with this key
       pair.
     Type: 'AWS::EC2::KeyPair::KeyName'
-    Default: id_rsa
   QSS3BucketName:
     AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
     ConstraintDescription: >-
@@ -155,7 +147,7 @@ Parameters:
     ConstraintDescription: >-
       Quick Start key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: examples/latest/
+    Default: tibco/ems/latest/
     Description: >-
       S3 key prefix for the Quick Start assets. Quick Start key prefix can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and
@@ -164,23 +156,18 @@ Parameters:
   PublicSubnet1ID:
     Description: 'ID of Subnet 1 in Availability Zone 1 (e.g., subnet-a0246dcd)'
     Type: 'AWS::EC2::Subnet::Id'
-    Default: subnet-67f73448
   PublicSubnet2ID:
     Description: 'ID of Subnet 2 in Availability Zone 2 (e.g., subnet-b1f432cd)'
     Type: 'AWS::EC2::Subnet::Id'
-    Default: subnet-6bf57920
   PrivateSubnet1ID:
     Description: 'ID of Subnet 1 in Availability Zone 1 (e.g., subnet-a0246dcd)'
     Type: 'AWS::EC2::Subnet::Id'
-    Default: subnet-1cec2f33
   PrivateSubnet2ID:
     Description: 'ID of Subnet 2 in Availability Zone 2 (e.g., subnet-b1f432cd)'
     Type: 'AWS::EC2::Subnet::Id'
-    Default: subnet-3bf77b70
   VPCID:
     Description: ID of your existing VPC for deployment
     Type: 'AWS::EC2::VPC::Id'
-    Default: vpc-30cc4f48
 Mappings:
   AWSAMIRegionMap:
     AMI:
@@ -269,9 +256,6 @@ Resources:
         - PolicyName: Instance-S3-Access-Role
           PolicyDocument:
             Statement:
-              - Effect: Allow
-                Action: 's3:ListAllMyBuckets'
-                Resource: 'arn:aws:s3:::*'
               - Effect: Allow
                 Action:
                   - 's3:ListBucket'
