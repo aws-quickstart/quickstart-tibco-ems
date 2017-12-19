@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "KeyPairName",
-    "ParameterValue": "cikey"
+    "ParameterValue": "$[alfred_getkeypair]"
   },
   {
     "ParameterKey": "EMSServerAMIType",
@@ -26,5 +26,9 @@
   {
     "ParameterKey": "EMSS3BucketName",
     "ParameterValue": "ems-product-bucklet"
+  },
+  {
+    "ParameterKey": "RemoteAccessCIDR",
+    "ParameterValue": "10.0.0.0/16"
   }
 ]
