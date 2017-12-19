@@ -141,10 +141,8 @@ Parameters:
     Type: String
   EMSS3BucketName:
     AllowedPattern: '^[a-z0-9][a-z0-9-.]*$'
-    Default: emstest
     Description: >-
-      Name of the S3 bucket for retrieving/storing EMS artifacts such as the
-      installer archive.
+      Name of the S3 bucket for retrieving EMS installer zip.
     Type: String
   EMSServerInstanceType:
     AllowedValues:
@@ -214,7 +212,7 @@ Parameters:
     ConstraintDescription: >-
       Quick Start key prefix can include numbers, lowercase letters, uppercase
       letters, hyphens (-), and forward slash (/).
-    Default: examples/latest/
+    Default: tibco/ems/latest/
     Description: >-
       S3 key prefix for the Quick Start assets. Quick Start key prefix can
       include numbers, lowercase letters, uppercase letters, hyphens (-), and
