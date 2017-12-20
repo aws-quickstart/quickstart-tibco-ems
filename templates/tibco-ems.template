@@ -9,11 +9,6 @@ Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
       - Label:
-          default: AWS Quick Start Configuration
-        Parameters:
-          - QSS3BucketName
-          - QSS3KeyPrefix
-      - Label:
           default: Network Configuration
         Parameters:
           - VPCID
@@ -36,11 +31,16 @@ Metadata:
           - EMSServerInstanceType
           - EMSServerPort
       - Label:
-          default: (Optional) TIBCO EMS Client Configuration
+          default: TIBCO EMS Client Configuration
         Parameters:
           - DeployEMSClientStack
           - EMSClientInstanceType
           - EMSClientAMIType
+      - Label:
+          default: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
     ParameterLabels:
       BastionSecurityGroupID:
         default: Bastion Security Group ID
