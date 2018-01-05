@@ -7,10 +7,7 @@ Description: >-
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
-      - Label: AWS Quick Start Configuration
-        Parameters:
-          - QSS3BucketName
-          - QSS3KeyPrefix
+      
       - Label: Network Configuration
         Parameters:
           - VPCID
@@ -27,6 +24,10 @@ Metadata:
           - BastionSecurityGroupID
           - EMSServerClientAccessSecurityGroupID
           - EMSServerPort
+      - Label: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
     ParameterLabels:
       BastionSecurityGroupID:
         default: Bastion Security Group ID
