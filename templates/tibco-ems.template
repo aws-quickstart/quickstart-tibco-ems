@@ -8,7 +8,6 @@ Description: >-
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
-      
       - Label:
           default: Network Configuration
         Parameters:
