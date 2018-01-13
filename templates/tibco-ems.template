@@ -105,6 +105,10 @@ Parameters:
       - t2.medium
       - t2.large
       - t2.xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
       - m4.large
       - m4.xlarge
       - m4.2xlarge
@@ -113,6 +117,10 @@ Parameters:
       - m3.large
       - m3.xlarge
       - m3.2xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
       - c4.large
       - c4.xlarge
       - c4.2xlarge
@@ -151,6 +159,10 @@ Parameters:
       - t2.medium
       - t2.large
       - t2.xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
       - m4.large
       - m4.xlarge
       - m4.2xlarge
@@ -159,6 +171,10 @@ Parameters:
       - m3.large
       - m3.xlarge
       - m3.2xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
       - c4.large
       - c4.xlarge
       - c4.2xlarge
@@ -327,6 +343,13 @@ Outputs:
   EMSServer1CP:
     Description: EMS Server 1 Connection Point
     Value: !GetAtt EMSServerStack.Outputs.EMSServer1CP
+  EMSServer1SSH:
+    Description: SSH command for accessing EMS Server 1 (assumes via the Bastion host with SSH agent forwarding enabled)
+    Value: !GetAtt EMSServerStack.Outputs.EMSServer1SSH
   EMSServer2CP:
     Description: EMS Server 2 Connection Point
     Value: !GetAtt EMSServerStack.Outputs.EMSServer2CP
+  EMSServer2SSH:
+    Description: SSH command for accessing EMS Server 2 (assumes via the Bastion host with SSH agent forwarding enabled)
+    Value: !GetAtt EMSServerStack.Outputs.EMSServer2SSH
+
