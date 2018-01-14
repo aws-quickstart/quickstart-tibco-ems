@@ -1354,7 +1354,7 @@ Outputs:
     Description: EMS Server 1 Connection Point
     Value: !Sub '${EMSServer1NIC.PrimaryPrivateIpAddress}:${EMSServerPort}'
     Export:
-      Name: !Sub '${AWS::StackName}-${EMSServer1NIC.PrimaryPrivateIpAddress}:${EMSServerPort}'
+      Name: !Sub '${AWS::StackName}-EMSServer1CP'
   EMSServer1SSH:
     Description: SSH command for accessing EMS Server 1 (assumes via the Bastion host with SSH agent forwarding enabled)
     Value: !Sub 'ssh -A ec2-user@${EMSServer1NIC.PrimaryPrivateIpAddress}'
@@ -1362,7 +1362,7 @@ Outputs:
     Description: EMS Server 2 Connection Point
     Value: !Sub '${EMSServer2NIC.PrimaryPrivateIpAddress}:${EMSServerPort}'
     Export:
-      Name: !Sub '${AWS::StackName}-${EMSServer2NIC.PrimaryPrivateIpAddress}:${EMSServerPort}'
+      Name: !Sub '${AWS::StackName}-EMSServer2CP'
   EMSServer2SSH:
     Description: SSH command for accessing EMS Server 2 (assumes via the Bastion host with SSH agent forwarding enabled)
     Value: !Sub 'ssh -A ec2-user@${EMSServer2NIC.PrimaryPrivateIpAddress}'
