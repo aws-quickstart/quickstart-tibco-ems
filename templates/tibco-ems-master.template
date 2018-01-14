@@ -106,13 +106,17 @@ Parameters:
       - t2.small
       - t2.medium
       - t2.large
-      - m3.large
-      - m3.xlarge
-      - m3.2xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
       - m4.large
       - m4.xlarge
       - m4.2xlarge
       - m4.4xlarge
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
     Default: t2.micro
     Description: Amazon EC2 instance type for the bastion instances
     Type: String
@@ -137,6 +141,10 @@ Parameters:
       - t2.medium
       - t2.large
       - t2.xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
       - m4.large
       - m4.xlarge
       - m4.2xlarge
@@ -145,6 +153,10 @@ Parameters:
       - m3.large
       - m3.xlarge
       - m3.2xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
       - c4.large
       - c4.xlarge
       - c4.2xlarge
@@ -183,6 +195,10 @@ Parameters:
       - t2.medium
       - t2.large
       - t2.xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
       - m4.large
       - m4.xlarge
       - m4.2xlarge
@@ -191,6 +207,10 @@ Parameters:
       - m3.large
       - m3.xlarge
       - m3.2xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
       - c4.large
       - c4.xlarge
       - c4.2xlarge
@@ -382,12 +402,22 @@ Resources:
         VPCCIDR: !Ref VPCCIDR
         VPCID: !GetAtt VPCStack.Outputs.VPCID
 Outputs:
+  BastionSSH:
+    Description: SSH command for accessing bastion with SSH agent forwarding enabled. Remove .pem if needed
+    Value: !Sub 'ssh -i ~/.ssh/${KeyPairName}.pem -A ec2-user@${BastionStack.Outputs.EIP1}'
   EMSEFSID:
     Description: EMS EFS ID (For Backup Purposes)
     Value: !GetAtt EMSStack.Outputs.EMSEFSID
   EMSServer1CP:
     Description: EMS Server 1 Connection Point
     Value: !GetAtt EMSStack.Outputs.EMSServer1CP
+  EMSServer1SSH:
+    Description: SSH command for accessing EMS Server 1 (assumes via the Bastion host with SSH agent forwarding enabled)
+    Value: !GetAtt EMSStack.Outputs.EMSServer1SSH
   EMSServer2CP:
     Description: EMS Server 2 Connection Point
     Value: !GetAtt EMSStack.Outputs.EMSServer2CP
+  EMSServer2SSH:
+    Description: SSH command for accessing EMS Server 2 (assumes via the Bastion host with SSH agent forwarding enabled)
+    Value: !GetAtt EMSStack.Outputs.EMSServer2SSH
+
