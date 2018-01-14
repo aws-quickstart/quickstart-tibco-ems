@@ -72,6 +72,10 @@ Parameters:
       - t2.medium
       - t2.large
       - t2.xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
       - m4.large
       - m4.xlarge
       - m4.2xlarge
@@ -80,6 +84,10 @@ Parameters:
       - m3.large
       - m3.xlarge
       - m3.2xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
       - c4.large
       - c4.xlarge
       - c4.2xlarge
@@ -98,7 +106,7 @@ Parameters:
     Description: >-
       Name of the TIBCO EMS Installation archive downloaded from TIBCO eDelivery
       site
-    Default: TIB_ems-dev_8.4.0_linux_x86_64.zip
+    Default: TIB_ems_8.4.0_linux_x86_64.zip
   EMSClientCount:
     Type: Number
     Description: >-
@@ -420,7 +428,7 @@ Resources:
             # First enable EPEL
             rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
-            # Now install Python Setuptools(easy_install) and Pip
+            # Now install Python Setup tools (easy_install) and Pip
             yum -y install python-pip
 
             # Now install cfn scripts
@@ -443,7 +451,7 @@ Resources:
           /opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'
 
           # Download/install AWS Cloudwatch Agent
-          curl https://s3.amazonaws.com//aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
+          curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
           chmod +x ./awslogs-agent-setup.py
           ./awslogs-agent-setup.py -n -r ${AWS::Region} -c /etc/awslogs/awslogs.conf || error_exit 'Failed to run awslogs-setup'
           chkconfig --add awslogs

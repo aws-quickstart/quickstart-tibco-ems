@@ -7,10 +7,6 @@ Description: >-
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
-      - Label: AWS Quick Start Configuration
-        Parameters:
-          - QSS3BucketName
-          - QSS3KeyPrefix
       - Label: Network Configuration
         Parameters:
           - VPCID
@@ -27,6 +23,10 @@ Metadata:
           - BastionSecurityGroupID
           - EMSServerClientAccessSecurityGroupID
           - EMSServerPort
+      - Label: AWS Quick Start Configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
     ParameterLabels:
       BastionSecurityGroupID:
         default: Bastion Security Group ID
@@ -62,13 +62,11 @@ Parameters:
       ID of the bastion host security group to enable SSH connections (e.g.,
       sg-7f16e910)
     Type: 'AWS::EC2::SecurityGroup::Id'
-    Default: sg-3207275a
   EMSServerClientAccessSecurityGroupID:
     Type: 'AWS::EC2::SecurityGroup::Id'
     Description: >-
       ID of the security group for clients accessing the EMS Servers (e.g.,
       sg-7f16e910)
-    Default: sg-fa092992
   EMSServerInstanceType:
     AllowedValues:
       - t2.micro
@@ -76,6 +74,10 @@ Parameters:
       - t2.medium
       - t2.large
       - t2.xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
       - m4.large
       - m4.xlarge
       - m4.2xlarge
@@ -84,6 +86,64 @@ Parameters:
       - m3.large
       - m3.xlarge
       - m3.2xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c3.large
+      - c3.xlarge
+      - c3.2xlarge
+      - c3.4xlarge
+      - c3.8xlarge
+    ConstraintDescription: Must contain valid instance type
+    Default: t2.medium
+    Description: Type of EC2 instance for the EMS Client instances
+    Type: String
+  EMSInstallerName:
+    Type: String
+    Description: >-
+      Name of the TIBCO EMS Installation archive downloaded from TIBCO eDelivery
+      site
+    Default: TIB_ems_8.4.0_linux_x86_64.zip
+  EMSServerAMIType:
+    AllowedValues:
+      - Amazon-Linux-HVM
+      - RHEL-7.4_HVM_GA
+    Default: Amazon-Linux-HVM
+    Description: Server Operating System to use - Amazon Linux or Red Hat
+    Type: String
+  EMSS3BucketName:
+    AllowedPattern: '^[a-z0-9][a-z0-9-.]*$'
+    Description: >-
+      Name of the S3 bucket for retrieving EMS installer zip.
+    Type: String
+  EMSServerInstanceType:
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m3.medium
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
       - c4.large
       - c4.xlarge
       - c4.2xlarge
@@ -132,7 +192,7 @@ Parameters:
     ConstraintDescription: >-
       Quick Start bucket name can include numbers, lowercase letters, uppercase
       letters, and hyphens (-). It cannot start or end with a hyphen (-).
-    Default: quickstart-reference 
+    Default: quickstart-reference
     Description: >-
       S3 bucket name for the Quick Start assets. This string can include
       numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot
@@ -232,8 +292,8 @@ Rules:
             - eu-central-1
           - !Ref AWS::Region
         AssertDescription: This Quick Start utilizes Amazon EFS which is only available
-          in the us-east-1 (N. Virginia), us-east-2 (Ohio), us-west-2 (Oregon), eu-west-1 (Ireland), 
-          eu-central-1 (Frankfurt) and ap-southeast-2 (Sydney) regions. Please launch the stack in 
+          in the us-east-1 (N. Virginia), us-east-2 (Ohio), us-west-2 (Oregon), eu-west-1 (Ireland),
+          eu-central-1 (Frankfurt) and ap-southeast-2 (Sydney) regions. Please launch the stack in
           one of these  regions
 Conditions:
   UseAmazonLinux: !Equals
@@ -501,7 +561,7 @@ Resources:
                 EOF
 
                 # Prep tibemsd1.log file. $TIBCO_HOME is owned by root:root created by cfn-init, but EMS service will run as ec2-user
-                # and therefore not have permssions to write to the log file without the following
+                # and therefore not have permissions to write to the log file without the following
                 touch $TIBEMSD_LOGFILE
                 chown ec2-user:ec2-user $TIBEMSD_LOGFILE
 
@@ -800,7 +860,7 @@ Resources:
           /opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'
 
           # Download/install AWS Cloudwatch Agent
-          curl https://s3.amazonaws.com//aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
+          curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
           chmod +x ./awslogs-agent-setup.py
           ./awslogs-agent-setup.py -n -r ${AWS::Region} -c /etc/awslogs/awslogs.conf || error_exit 'Failed to run awslogs-setup'
           chkconfig --add awslogs
@@ -1256,7 +1316,7 @@ Resources:
           /opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'
 
           # Download/install AWS Cloudwatch Agent
-          curl https://s3.amazonaws.com//aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
+          curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
           chmod +x ./awslogs-agent-setup.py
           ./awslogs-agent-setup.py -n -r ${AWS::Region} -c /etc/awslogs/awslogs.conf || error_exit 'Failed to run awslogs-setup'
           chkconfig --add awslogs
@@ -1293,6 +1353,16 @@ Outputs:
   EMSServer1CP:
     Description: EMS Server 1 Connection Point
     Value: !Sub '${EMSServer1NIC.PrimaryPrivateIpAddress}:${EMSServerPort}'
+    Export:
+      Name: !Sub '${AWS::StackName}-EMSServer1CP'
+  EMSServer1SSH:
+    Description: SSH command for accessing EMS Server 1 (assumes via the Bastion host with SSH agent forwarding enabled)
+    Value: !Sub 'ssh -A ec2-user@${EMSServer1NIC.PrimaryPrivateIpAddress}'
   EMSServer2CP:
     Description: EMS Server 2 Connection Point
     Value: !Sub '${EMSServer2NIC.PrimaryPrivateIpAddress}:${EMSServerPort}'
+    Export:
+      Name: !Sub '${AWS::StackName}-EMSServer2CP'
+  EMSServer2SSH:
+    Description: SSH command for accessing EMS Server 2 (assumes via the Bastion host with SSH agent forwarding enabled)
+    Value: !Sub 'ssh -A ec2-user@${EMSServer2NIC.PrimaryPrivateIpAddress}'
