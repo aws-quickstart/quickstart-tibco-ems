@@ -3,7 +3,7 @@ Description: >-
   This master template creates a VPC infrastructure for a multi-AZ, multi-tier
   deployment of TIBCO EMS on AWS. It deploys a VPC with bastions. **WARNING**
   This template creates EC2 instances and related resources. You will be billed
-  for the AWS resources used if you create a stack from this template.
+  for the AWS resources used if you create a stack from this template. (qs-1o3ifmu3u)
 Metadata:
   AWS::CloudFormation::Interface:
     ParameterGroups:
