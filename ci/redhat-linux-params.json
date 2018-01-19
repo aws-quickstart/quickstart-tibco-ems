@@ -25,7 +25,7 @@
   },
   {
     "ParameterKey": "EMSS3BucketName",
-    "ParameterValue": "quickstart-ci-media"
+    "ParameterValue": "$[alfred_getmediabucket]"
   },
   {
     "ParameterKey": "RemoteAccessCIDR",
