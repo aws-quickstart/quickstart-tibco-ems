@@ -18,7 +18,7 @@ You can also use the AWS CloudFormation templates as a starting point for your o
 ![Quick Start architecture for TIBCO EMS on AWS](https://d0.awsstatic.com/partner-network/QuickStart/datasheets/tibco-ems-on-aws-architecture.png) 
 
 For architectural details, best practices, step-by-step instructions, and customization options, see the 
-[deployment guide](https://s3.amazonaws.com/quickstart-reference/tibco/ems/latest/doc/tibco-ems-on-the-aws-cloud.pdf).
+[deployment guide](https://fwd.aws/VRza9).
 
 To post feedback, submit feature ideas, or report bugs, use the **Issues** section of this GitHub repo.
 If you'd like to submit code for this Quick Start, please review the [AWS Quick Start Contributor's Kit](https://aws-quickstart.github.io/). 
