@@ -60,10 +60,10 @@ Parameters:
     Type: 'AWS::EC2::SecurityGroup::Id'
   EMSAMIType:
     AllowedValues:
-      - Amazon-Linux-HVM
-      - RHEL-7.4_HVM_GA
-    Default: Amazon-Linux-HVM
-    Description: Linux Operating system to use - Amazon Linux or Red Hat
+      - Amazon-Linux2-HVM
+      - RHEL-7.5_HVM_GA
+    Default: Amazon-Linux2-HVM
+    Description: Linux Operating system to use - Amazon Linux2 or Red Hat
     Type: String
   EMSClientInstanceType:
     AllowedValues:
@@ -179,54 +179,57 @@ Parameters:
 Mappings:
   AWSAMIRegionMap:
     AMI:
-      AMZLNX: amzn-ami-hvm-2017.09.1.20180103-x86_64-gp2
-      RHELHVM: RHEL-7.4_HVM_GA-20170808-x86_64-2-Hourly2-GP2
+      AMZLNX: amzn2-ami-hvm-2.0.20180622.1-x86_64-gp2
+      RHELHVM: RHEL-7.5_HVM_GA-20180322-x86_64-1-Hourly2-GP2
     ap-northeast-1:
-      AMZLNX: ami-19910c7f
-      RHELHVM: ami-30ef0556
+      AMZLNX: ami-e99f4896
+      RHELHVM: ami-6b0d5f0d
     ap-northeast-2:
-      AMZLNX: ami-7bef4f15
-      RHELHVM: ami-0f5a8361
+      AMZLNX: ami-afd86dc1
+      RHELHVM: ami-3eee4150
     ap-south-1:
-      AMZLNX: ami-4c045023
-      RHELHVM: ami-e41b618b
+      AMZLNX: ami-d783a9b8
+      RHELHVM: ami-5b673c34
     ap-southeast-1:
-      AMZLNX: ami-1c99ee60
-      RHELHVM: ami-10bb2373
+      AMZLNX: ami-05868579
+      RHELHVM: ami-76144b0a
     ap-southeast-2:
-      AMZLNX: ami-33996b51
-      RHELHVM: ami-ccecf5af
+      AMZLNX: ami-39f8215b
+      RHELHVM: ami-67589505
     ca-central-1:
-      AMZLNX: ami-e5cc4981
-      RHELHVM: ami-dad866be
+      AMZLNX: ami-0ee86a6a
+      RHELHVM: ami-49f0762d
     eu-central-1:
-      AMZLNX: ami-06a83869
-      RHELHVM: ami-d74be5b8
+      AMZLNX: ami-7c4f7097
+      RHELHVM: ami-c86c3f23
     eu-west-1:
-      AMZLNX: ami-075eca7e
-      RHELHVM: ami-bb9a6bc2
+      AMZLNX: ami-466768ac
+      RHELHVM: ami-7c491f05
     eu-west-2:
-      AMZLNX: ami-63243c07
-      RHELHVM: ami-a1f5e4c5
+      AMZLNX: ami-b8b45ddf
+      RHELHVM: ami-7c1bfd1b
+    eu-west-3:
+      AMZLNX: ami-2cf54551
+      RHELHVM: ami-5026902d
     sa-east-1:
-      AMZLNX: ami-9582c1f9
-      RHELHVM: ami-a789ffcb
+      AMZLNX: ami-6dca9001
+      RHELHVM: ami-b0b7e3dc
     us-east-1:
-      AMZLNX: ami-5583d42f
-      RHELHVM: ami-c998b6b2
+      AMZLNX: ami-b70554c8
+      RHELHVM: ami-6871a115
     us-east-2:
-      AMZLNX: ami-e81b308d
-      RHELHVM: ami-cfdafaaa
+      AMZLNX: ami-8c122be9
+      RHELHVM: ami-03291866
     us-west-1:
-      AMZLNX: ami-2f99984f
-      RHELHVM: ami-66eec506
+      AMZLNX: ami-e0ba5c83
+      RHELHVM: ami-18726478
     us-west-2:
-      AMZLNX: ami-a142e9d9
-      RHELHVM: ami-9fa343e7
+      AMZLNX: ami-a9d09ed1
+      RHELHVM: ami-28e07e50
 Conditions:
   UseAmazonLinux: !Equals
     - !Ref EMSAMIType
-    - Amazon-Linux-HVM
+    - Amazon-Linux2-HVM
 Resources:
   TibcoEmsMainLogGroup:
     Type: 'AWS::Logs::LogGroup'
@@ -336,6 +339,9 @@ Resources:
                 /tmp/ems/installer/TIBCOUniversalInstaller-lnx-x86-64.bin -V \
                   responseFile=TIBCOUniversalInstaller-ems.silent \
                   -is:javahome $JAVA_HOME -is:log /var/log/TIBCOEMSInstaller.log -silent
+
+                # change the owner of EMS to ec2-user
+                chown -R ec2-user:ec2-user $TIBCO_HOME
                 ########
               mode: '000755'
               owner: root
@@ -423,10 +429,10 @@ Resources:
           }
 
           # If Red-Hat, Install aws-cfn-bootstrap code
-          if [ "${EMSAMIType}" != "Amazon-Linux-HVM" ]; then
-            ### This is redhat 7. It supports cloud-init but Cfn packages need to be installed unlike AWS Linux. And they are installed in a different location
-            # First enable EPEL
-            rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+          if [ "${EMSAMIType}" != "Amazon-Linux2-HVM" ]; then
+            ### This is redhat 7. It supports cloud-init but Cfn packages need to be installed unlike AWS Linux2. And they are installed in a different location
+            # Enable EPEL
+            sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 
             # Now install Python Setup tools (easy_install) and Pip
             yum -y install python-pip
@@ -440,8 +446,10 @@ Resources:
             chkconfig --add cfn-hup
 
           else
-            # Install on Amazon Linux
-            yum install -y aws-cfn-bootstrap
+            # Install on Amazon Linux2
+            # Enable EPEL
+             sudo yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+             yum install -y aws-cfn-bootstrap
           fi
 
           # Initialize the instance
@@ -453,6 +461,7 @@ Resources:
           # Download/install AWS Cloudwatch Agent
           curl https://s3.amazonaws.com/aws-cloudwatch/downloads/latest/awslogs-agent-setup.py -O || error_exit 'Failed to download awslogs-setup'
           chmod +x ./awslogs-agent-setup.py
+          sed -i '1s/^/Amazon Linux AMI \n/' /etc/issue
           ./awslogs-agent-setup.py -n -r ${AWS::Region} -c /etc/awslogs/awslogs.conf || error_exit 'Failed to run awslogs-setup'
           chkconfig --add awslogs
           service awslogs start
