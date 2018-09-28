@@ -113,7 +113,7 @@ Parameters:
       Number of EMS client instances to create
     Default: 2
   EMSS3BucketName:
-    AllowedPattern: '^[a-z0-9][a-z0-9-.]*$'
+    AllowedPattern: '^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$'
     Description: >-
       Name of the S3 bucket for retrieving EMS installer zip.
     Type: String
