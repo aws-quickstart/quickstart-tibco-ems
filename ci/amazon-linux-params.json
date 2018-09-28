@@ -27,7 +27,8 @@
     "ParameterKey": "EMSS3BucketName",
     "ParameterValue": "$[alfred_getmediabucket]"
   },
-  { "ParameterKey": "RemoteAccessCIDR",
+  { 
+  	"ParameterKey": "RemoteAccessCIDR",
     "ParameterValue": "10.0.0.0/16"
   }
 ]
