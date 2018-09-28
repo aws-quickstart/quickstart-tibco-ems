@@ -7,10 +7,6 @@ Description: >-
 Metadata:
   'AWS::CloudFormation::Interface':
     ParameterGroups:
-<<<<<<< HEAD
-=======
-      
->>>>>>> a0862641d2b8c0ce61c798c0daa33cf312d62228
       - Label: Network Configuration
         Parameters:
           - VPCID

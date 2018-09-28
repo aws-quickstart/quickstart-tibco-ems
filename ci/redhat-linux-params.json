@@ -5,7 +5,7 @@
   },
   {
     "ParameterKey": "KeyPairName",
-    "ParameterValue": "rflather_temp"
+    "ParameterValue": "$[alfred_getkeypair]"
   },
   {
     "ParameterKey": "EMSServerAMIType",
@@ -29,12 +29,5 @@
   },
   { "ParameterKey": "RemoteAccessCIDR",
     "ParameterValue": "10.0.0.0/16"
-  },
- {
-    "ParameterKey": "QSS3BucketName",
-    "ParameterValue": "us-tibco-ems"
-  },
-  { "ParameterKey": "QSS3KeyPrefix",
-    "ParameterValue": ""
   }
 ]
