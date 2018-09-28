@@ -93,10 +93,10 @@ Parameters:
     Default: 'true'
   EMSClientAMIType:
     AllowedValues:
-      - Amazon-Linux-HVM
-      - RHEL-7.4_HVM_GA
-    Default: Amazon-Linux-HVM
-    Description: Client Operating System to use - Amazon Linux or Red Hat
+      - Amazon-Linux2-HVM
+      - RHEL-7.5_HVM_GA
+    Default: Amazon-Linux2-HVM
+    Description: Client Operating System to use - Amazon Linux2 or Red Hat
     Type: String
   EMSClientInstanceType:
     AllowedValues:
@@ -142,10 +142,10 @@ Parameters:
     Default: TIB_ems_8.4.0_linux_x86_64.zip
   EMSServerAMIType:
     AllowedValues:
-      - Amazon-Linux-HVM
-      - RHEL-7.4_HVM_GA
-    Default: Amazon-Linux-HVM
-    Description: Server Operating System to use - Amazon Linux or Red Hat
+      - Amazon-Linux2-HVM
+      - RHEL-7.5_HVM_GA
+    Default: Amazon-Linux2-HVM
+    Description: Server Operating System to use - Amazon Linux2 or Red Hat
     Type: String
   EMSS3BucketName:
     AllowedPattern: '^[a-z0-9][a-z0-9-.]*$'
@@ -185,7 +185,7 @@ Parameters:
       - c3.4xlarge
       - c3.8xlarge
     ConstraintDescription: Must contain valid instance type
-    Default: t2.medium
+    Default: t2.large
     Description: Type of EC2 instance for the EMS Server instances
     Type: String
   EMSServerPort:
@@ -268,13 +268,16 @@ Rules:
           - - us-east-1
             - us-east-2
             - us-west-2
+            - us-west-1
             - eu-west-1
             - ap-southeast-2
+            - ap-northeast-1
+            - ap-northeast-2
             - eu-central-1
           - !Ref AWS::Region
         AssertDescription: This Quick Start utilizes Amazon EFS which is only available
-          in the us-east-1 (N. Virginia), us-east-2 (Ohio), us-west-2 (Oregon), eu-west-1 (Ireland),
-          eu-central-1 (Frankfurt) and ap-southeast-2 (Sydney) regions. Please launch the stack in
+          in the us-east-1 (N. Virginia), us-east-2 (Ohio), us-west-1 (N. California), us-west-2 (Oregon), eu-west-1 (Ireland),
+          eu-central-1 (Frankfurt), ap-northeast-1 (Tokyo), ap-northeast-2 (Seoul), and ap-southeast-2 (Sydney) regions. Please launch the stack in
           one of these regions
 Conditions:
   IncludeEMSClientStack:

@@ -5,11 +5,11 @@
   },
   {
     "ParameterKey": "KeyPairName",
-    "ParameterValue": "$[alfred_getkeypair]"
+    "ParameterValue": "rflather_temp"
   },
   {
     "ParameterKey": "EMSServerAMIType",
-    "ParameterValue": "RHEL-7.4_HVM_GA"
+    "ParameterValue": "RHEL-7.5_HVM_GA"
   },
   {
     "ParameterKey": "EMSInstallerName",
@@ -27,8 +27,14 @@
     "ParameterKey": "EMSS3BucketName",
     "ParameterValue": "$[alfred_getmediabucket]"
   },
-  {
-    "ParameterKey": "RemoteAccessCIDR",
+  { "ParameterKey": "RemoteAccessCIDR",
     "ParameterValue": "10.0.0.0/16"
+  },
+ {
+    "ParameterKey": "QSS3BucketName",
+    "ParameterValue": "us-tibco-ems"
+  },
+  { "ParameterKey": "QSS3KeyPrefix",
+    "ParameterValue": ""
   }
 ]
