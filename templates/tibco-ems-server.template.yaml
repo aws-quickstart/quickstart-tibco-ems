@@ -26,6 +26,7 @@ Metadata:
       - Label: AWS Quick Start Configuration
         Parameters:
           - QSS3BucketName
+          - QSS3BucketRegion
           - QSS3KeyPrefix
     ParameterLabels:
       BastionSecurityGroupID:
@@ -46,6 +47,8 @@ Metadata:
         default: SSH Key Name
       QSS3BucketName:
         default: Quick Start S3 Bucket Name
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket region
       QSS3KeyPrefix:
         default: Quick Start S3 Key Prefix
       Subnet1ID:
@@ -121,48 +124,6 @@ Parameters:
     Description: >-
       Name of the S3 bucket for retrieving EMS installer zip.
     Type: String
-  EMSServerInstanceType:
-    AllowedValues:
-      - t2.micro
-      - t2.small
-      - t2.medium
-      - t2.large
-      - t2.xlarge
-      - m5.large
-      - m5.xlarge
-      - m5.2xlarge
-      - m5.4xlarge
-      - m4.large
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m3.medium
-      - m3.large
-      - m3.xlarge
-      - m3.2xlarge
-      - c5.large
-      - c5.xlarge
-      - c5.2xlarge
-      - c5.4xlarge
-      - c4.large
-      - c4.xlarge
-      - c4.2xlarge
-      - c4.4xlarge
-      - c3.large
-      - c3.xlarge
-      - c3.2xlarge
-      - c3.4xlarge
-      - c3.8xlarge
-    ConstraintDescription: Must contain valid instance type
-    Default: t2.large
-    Description: Type of EC2 instance for the EMS Server instances
-    Type: String
-  EMSInstallerName:
-    Type: String
-    Description: >-
-      Name of the TIBCO EMS Installation archive downloaded from TIBCO eDelivery
-      site
-    Default: TIB_ems_8.4.0_linux_x86_64.zip
   EMSAMIType:
     AllowedValues:
       - Amazon-Linux2-HVM
@@ -177,11 +138,6 @@ Parameters:
     MinLength: '4'
     MaxLength: '5'
     Default: 7222
-  EMSS3BucketName:
-    AllowedPattern: '^[a-z0-9][a-z0-9-.]*$'
-    Description: >-
-      Name of the S3 bucket for retrieving EMS installer zip.
-    Type: String
   KeyPairName:
     Description: >
       Name of an existing EC2 key pair. All instances will launch with this key
@@ -197,6 +153,11 @@ Parameters:
       S3 bucket name for the Quick Start assets. This string can include
       numbers, lowercase letters, uppercase letters, and hyphens (-). It cannot
       start or end with a hyphen (-).
+    Type: String
+  QSS3BucketRegion:
+    Default: 'us-east-1'
+    Description: >-
+      The AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.
     Type: String
   QSS3KeyPrefix:
     AllowedPattern: '^[0-9a-zA-Z-/]*$'
@@ -302,6 +263,7 @@ Rules:
           eu-central-1 (Frankfurt), ap-northeast-1 (Tokyo), ap-northeast-2 (Seoul), and ap-southeast-2 (Sydney) regions. Please launch the stack in
           one of these  regions
 Conditions:
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
   UseAmazonLinux: !Equals
     - !Ref EMSAMIType
     - Amazon-Linux2-HVM
@@ -313,8 +275,8 @@ Resources:
       VpcId: !Ref VPCID
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: '2049'
-          ToPort: '2049'
+          FromPort: 2049
+          ToPort: 2049
           CidrIp: !Ref VPCCIDR
   EMSServerSecurityGroup:
     Type: 'AWS::EC2::SecurityGroup'
@@ -327,12 +289,12 @@ Resources:
           ToPort: !Ref EMSServerPort
           SourceSecurityGroupId: !Ref EMSServerClientAccessSecurityGroupID
         - IpProtocol: tcp
-          FromPort: '2049'
-          ToPort: '2049'
+          FromPort: 2049
+          ToPort: 2049
           SourceSecurityGroupId: !Ref EFSNFSSecurityGroup
         - IpProtocol: tcp
-          FromPort: '22'
-          ToPort: '22'
+          FromPort: 22
+          ToPort: 22
           SourceSecurityGroupId: !Ref BastionSecurityGroupID
   EMSServerSecurityGroupIngressRule:
     Type: 'AWS::EC2::SecurityGroupIngress'
@@ -364,7 +326,9 @@ Resources:
             Statement:
               - Action:
                   - 's3:GetObject'
-                Resource: !Sub 'arn:aws:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+                Resource: !Sub
+                  - arn:${AWS::Partition}:s3:::${S3Bucket}/${QSS3KeyPrefix}*
+                  - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
                 Effect: Allow
           PolicyName: aws-quick-start-s3-policy
         - PolicyName: Instance-Logging-Role
@@ -825,7 +789,7 @@ Resources:
               command: /tmp/ems/scripts/ems-config-launch-service.sh
     Properties:
       KeyName: !Ref KeyPairName
-      DisableApiTermination: 'false'
+      DisableApiTermination: false
       ImageId: !If
         - UseAmazonLinux
         - !FindInMap
@@ -837,7 +801,7 @@ Resources:
           - !Ref 'AWS::Region'
           - RHELHVM
       InstanceType: !Ref EMSServerInstanceType
-      Monitoring: 'false'
+      Monitoring: false
       Tags:
         - Key: Application
           Value: AWS Quick Start (TIBCO EMS)
@@ -1308,7 +1272,7 @@ Resources:
               command: /tmp/ems/scripts/ems-config-launch-service.sh
     Properties:
       KeyName: !Ref KeyPairName
-      DisableApiTermination: 'false'
+      DisableApiTermination: false
       ImageId: !If
         - UseAmazonLinux
         - !FindInMap
@@ -1320,7 +1284,7 @@ Resources:
           - !Ref 'AWS::Region'
           - RHELHVM
       InstanceType: !Ref EMSServerInstanceType
-      Monitoring: 'false'
+      Monitoring: false
       Tags:
         - Key: Application
           Value: AWS Quick Start (TIBCO EMS)

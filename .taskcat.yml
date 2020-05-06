@@ -1,0 +1,57 @@
+project:
+  name: quickstart-tibco-ems
+  owner: rflather@tibco.com
+  regions:
+  - ap-northeast-1
+  - ap-northeast-2
+  - ap-south-1
+  - ap-southeast-1
+  - ap-southeast-2
+  - ca-central-1
+  - eu-central-1
+  - eu-west-1
+  - eu-west-2
+  - eu-west-3
+  - sa-east-1
+  - us-east-1
+  - us-east-2
+  - us-west-1
+  - us-west-2
+  s3_bucket: ''
+tests:
+  amazon-linux:
+    parameters:
+      AvailabilityZones: $[alfred_getaz_2]
+      KeyPairName: $[alfred_getkeypair]
+      EMSServerAMIType: Amazon-Linux2-HVM
+      EMSInstallerName": tibco/ems/TIB_ems_8.4.0_linux_x86_64.zip
+      EMSServerPort: 8222
+      EMSS3BucketName: $[alfred_getmediabucket]
+      RemoteAccessCIDR: 10.0.0.0/16
+      QSS3BucketName: $[taskcat_autobucket]
+    regions:
+    - us-east-1
+    - us-west-2
+    - eu-west-1
+    - ap-northeast-1
+    - eu-central-1
+    s3_bucket: ''
+    template: templates/tibco-ems-master.template.yaml
+  redhat-linux:
+    parameters:
+      AvailabilityZones: $[alfred_getaz_2]
+      KeyPairName: $[alfred_getkeypair]
+      EMSServerAMIType: RHEL-7.5_HVM_GA
+      EMSInstallerName": tibco/ems/TIB_ems_8.4.0_linux_x86_64.zip
+      EMSServerPort: 8222
+      EMSS3BucketName: $[alfred_getmediabucket]
+      RemoteAccessCIDR: 10.0.0.0/16
+      QSS3BucketName: $[taskcat_autobucket]
+    regions:
+    - us-east-1
+    - us-west-2
+    - eu-west-1
+    - ap-northeast-1
+    - eu-central-1
+    s3_bucket: ''
+    template: templates/tibco-ems-master.template.yaml
