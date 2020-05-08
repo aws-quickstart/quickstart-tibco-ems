@@ -331,8 +331,7 @@ Resources:
                   - S3Bucket: !If [UsingDefaultBucket, !Sub '${QSS3BucketName}-${AWS::Region}', !Ref QSS3BucketName]
                 Effect: Allow
           PolicyName: aws-quick-start-s3-policy
-        - PolicyName: Instance-Logging-Role
-          PolicyDocument:
+        - PolicyDocument:
             Statement:
               - Effect: Allow
                 Action:
@@ -341,20 +340,21 @@ Resources:
                   - 'logs:PutLogEvents'
                   - 'logs:DescribeLogStreams'
                 Resource: !GetAtt TibcoEmsMainLogGroup.Arn
-        - PolicyName: Instance-S3-Access-Role
-          PolicyDocument:
+          PolicyName: Instance-Logging-Role
+        - PolicyDocument:
             Statement:
               - Effect: Allow
                 Action:
                   - 's3:ListBucket'
                   - 's3:GetBucketLocation'
-                Resource: !Sub 'arn:aws:s3:::${EMSS3BucketName}'
+                Resource: !Sub arn:aws:s3:::${EMSS3BucketName}
               - Effect: Allow
                 Action:
                   - 's3:GetObject'
                   - 's3:PutObject'
                   - 's3:DeleteObject'
-                Resource: !Sub 'arn:aws:s3:::${EMSS3BucketName}/*'
+                Resource: !Sub arn:aws:s3:::${EMSS3BucketName}/*
+          PolicyName: Instance-S3-Access-Role
   IamInstanceRoleProfile:
     Type: 'AWS::IAM::InstanceProfile'
     Properties:
@@ -411,13 +411,12 @@ Resources:
       - EMSServer1NIC
       - MountTarget1
     Metadata:
-      'AWS::CloudFormation::Authentication':
+      AWS::CloudFormation::Authentication:
         S3AccessCreds:
           type: S3
           roleName: !Ref IamInstanceRole
-          buckets:
-            - !Ref EMSS3BucketName
-      'AWS::CloudFormation::Init':
+          buckets: !Ref EMSS3BucketName
+      AWS::CloudFormation::Init:
         config:
           packages:
             yum:
