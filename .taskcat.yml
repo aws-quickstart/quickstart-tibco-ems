@@ -24,7 +24,7 @@ tests:
       AvailabilityZones: $[alfred_getaz_2]
       KeyPairName: $[alfred_getkeypair]
       EMSServerAMIType: Amazon-Linux2-HVM
-      EMSInstallerName: override_this
+      EMSInstallerName: tibco/ems/TIB_ems_8.4.0_linux_x86_64.zip
       EMSServerPort: 8222
       EMSS3BucketName: override_this
       RemoteAccessCIDR: 10.0.0.0/16
@@ -42,7 +42,7 @@ tests:
       AvailabilityZones: $[alfred_getaz_2]
       KeyPairName: $[alfred_getkeypair]
       EMSServerAMIType: RHEL-7.5_HVM_GA
-      EMSInstallerName: override_this
+      EMSInstallerName: tibco/ems/TIB_ems_8.4.0_linux_x86_64.zip
       EMSServerPort: 8222
       EMSS3BucketName: override_this
       RemoteAccessCIDR: 10.0.0.0/16
