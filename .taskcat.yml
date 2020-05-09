@@ -27,6 +27,7 @@ tests:
       EMSInstallerName: tibco/ems/TIB_ems_8.4.0_linux_x86_64.zip
       EMSServerPort: 8222
       EMSS3BucketName: override_this
+      QSS3BucketRegion: $[taskcat_current_region]
       RemoteAccessCIDR: 10.0.0.0/16
       QSS3BucketName: $[taskcat_autobucket]
     regions:
@@ -47,6 +48,7 @@ tests:
       EMSS3BucketName: override_this
       RemoteAccessCIDR: 10.0.0.0/16
       QSS3BucketName: $[taskcat_autobucket]
+      QSS3BucketRegion: $[taskcat_current_region]
     regions:
     - us-east-1
     - us-west-2
