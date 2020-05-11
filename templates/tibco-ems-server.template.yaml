@@ -485,7 +485,6 @@ Resources:
                  # Mount EFS and add mount to fstab to restore on reboot with nfs4
                  sudo mount --types nfs4 --options $EFS_MOUNT_OPTIONS ${EFSFileSystem}.efs.${AWS::Region}.amazonaws.com:/ /mnt/efs
                  sudo echo "${EFSFileSystem}.efs.${AWS::Region}.amazonaws.com:/ /mnt/efs nfs4 $EFS_MOUNT_OPTIONS 0 0" >> /etc/fstab
-
                 fi
 
                 # Create shared directory structure (ok if already present)
