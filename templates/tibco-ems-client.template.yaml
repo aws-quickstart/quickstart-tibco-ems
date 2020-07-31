@@ -185,52 +185,52 @@ Parameters:
 Mappings:
   AWSAMIRegionMap:
     AMI:
-      AMZLNX: amzn2-ami-hvm-2.0.20180622.1-x86_64-gp2
+      AMZLNX: amzn2-ami-hvm-2.0.20200722.0-x86_64-gp2
       RHELHVM: RHEL-7.5_HVM_GA-20180322-x86_64-1-Hourly2-GP2
     ap-northeast-1:
-      AMZLNX: ami-e99f4896
+      AMZLNX: ami-0cc75a8978fbbc969
       RHELHVM: ami-6b0d5f0d
     ap-northeast-2:
-      AMZLNX: ami-afd86dc1
+      AMZLNX: ami-0bd7691bf6470fe9c
       RHELHVM: ami-3eee4150
     ap-south-1:
-      AMZLNX: ami-d783a9b8
+      AMZLNX: ami-0ebc1ac48dfd14136
       RHELHVM: ami-5b673c34
     ap-southeast-1:
-      AMZLNX: ami-05868579
+      AMZLNX: ami-0cd31be676780afa7
       RHELHVM: ami-76144b0a
     ap-southeast-2:
-      AMZLNX: ami-39f8215b
+      AMZLNX: ami-0ded330691a314693
       RHELHVM: ami-67589505
     ca-central-1:
-      AMZLNX: ami-0ee86a6a
+      AMZLNX: ami-013d1df4bcea6ba95
       RHELHVM: ami-49f0762d
     eu-central-1:
-      AMZLNX: ami-7c4f7097
+      AMZLNX: ami-0c115dbd34c69a004
       RHELHVM: ami-c86c3f23
     eu-west-1:
-      AMZLNX: ami-466768ac
+      AMZLNX: ami-07d9160fa81ccffb5
       RHELHVM: ami-7c491f05
     eu-west-2:
-      AMZLNX: ami-b8b45ddf
+      AMZLNX: ami-0a13d44dccf1f5cf6
       RHELHVM: ami-7c1bfd1b
     eu-west-3:
-      AMZLNX: ami-2cf54551
+      AMZLNX: ami-093fa4c538885becf
       RHELHVM: ami-5026902d
     sa-east-1:
-      AMZLNX: ami-6dca9001
+      AMZLNX: ami-018ccfb6b4745882a
       RHELHVM: ami-b0b7e3dc
     us-east-1:
-      AMZLNX: ami-b70554c8
+      AMZLNX: ami-02354e95b39ca8dec
       RHELHVM: ami-6871a115
     us-east-2:
-      AMZLNX: ami-8c122be9
+      AMZLNX: ami-07c8bc5c1ce9598c3
       RHELHVM: ami-03291866
     us-west-1:
-      AMZLNX: ami-e0ba5c83
+      AMZLNX: ami-05655c267c89566dd
       RHELHVM: ami-18726478
     us-west-2:
-      AMZLNX: ami-a9d09ed1
+      AMZLNX: ami-0873b46c45c11058d
       RHELHVM: ami-28e07e50
 Conditions:
   UsingDefaultBucket: !Equals [!Ref QSS3BucketName, 'aws-quickstart']
