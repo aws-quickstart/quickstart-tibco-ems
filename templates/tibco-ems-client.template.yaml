@@ -313,6 +313,12 @@ Resources:
           buckets: !Ref EMSS3BucketName
       'AWS::CloudFormation::Init':
         config:
+          awscli:
+            commands:
+              00_set_default_s3_signature_version:
+                command: aws configure set default.s3.signature_version s3v4
+              01_set_default_region:
+                command: !Sub "aws configure set default.region '${AWS::Region}'"
           packages:
             yum:
               java-1.8.0-openjdk-devel: []
